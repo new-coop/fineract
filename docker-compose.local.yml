@@ -1,0 +1,22 @@
+# Local development override: same as docker-compose.yml but without the
+# Java debug port 5000, which collides with macOS AirPlay Receiver.
+services:
+
+  db:
+    extends:
+      file: ./config/docker/compose/postgresql.yml
+      service: postgresql
+
+  fineract:
+    extends:
+      file: ./config/docker/compose/fineract.yml
+      service: fineract
+    ports:
+      - "8443:8443"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./config/docker/env/fineract.env
+      - ./config/docker/env/fineract-common.env
+      - ./config/docker/env/fineract-postgresql.env

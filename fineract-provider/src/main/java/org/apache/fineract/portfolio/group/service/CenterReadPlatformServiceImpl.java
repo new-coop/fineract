@@ -494,13 +494,17 @@ public class CenterReadPlatformServiceImpl implements CenterReadPlatformService 
         final CenterCalendarDataMapper centerCalendarMapper = new CenterCalendarDataMapper();
         String sql = centerCalendarMapper.schema();
         Collection<CenterData> centerDataArray;
+        final String groupByClause = " group by ce.id, ce.display_name, g.account_no, g.office_id, g.staff_id, s.display_name,"
+                + " g.external_id, g.status_enum, g.activation_date, g.hierarchy, c.id, ci.id, ci.entity_id, ci.entity_type_enum,"
+                + " c.title, c.description, c.location, c.start_date, c.end_date, c.recurrence, c.meeting_time";
         if (staffId != null) {
             sql += " and g.staff_id = ? ";
             sql += " and lrs.duedate <= ? "; // and l.loan_type_enum = 3 ";
-            sql += " group by c.id, ci.id, g.account_no, g.external_id, g.status_enum, g.activation_date, g.hierarchy";
+            sql += groupByClause;
             centerDataArray = this.jdbcTemplate.query(sql, centerCalendarMapper, // NOSONAR
                     meetingDate, meetingDate, meetingDate, meetingDate, meetingDate, meetingDate, officeId, staffId, meetingDate);
         } else {
+            sql += groupByClause;
             centerDataArray = this.jdbcTemplate.query(sql, centerCalendarMapper, // NOSONAR
                     meetingDate, meetingDate, meetingDate, meetingDate, meetingDate, meetingDate, officeId);
         }
